@@ -139,7 +139,7 @@ class User:
 		self.access = access
 
     def update(self): 
-		if user->access & 4:
+		if user.access & 4:
     		# ...
 ```
 
@@ -158,7 +158,7 @@ class User:
 		self.access = access
 
     def update(self): 
-		if user->access & self.ACCESS_UPDATE):
+		if user.access & self.ACCESS_UPDATE):
     		# do edit ...
 ```
 
