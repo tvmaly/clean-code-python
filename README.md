@@ -73,7 +73,7 @@ Status: In Progress
 ```python
 from datetime import date
 
-$ymdstr = date.now().isoformat()
+ymdstr = date.now().isoformat()
 ```
 
 **Good:**
@@ -81,7 +81,7 @@ $ymdstr = date.now().isoformat()
 ```python
 from datetime import date
 
-$currentDate = date.now().isoformat()
+currentDate = date.now().isoformat()
 ```
 
 **[⬆ back to top](#table-of-contents)**
