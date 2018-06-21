@@ -256,39 +256,31 @@ def is_shop_open(day: str):
 **Bad:**
 
 ```python
-function fibonacci(int $n)
-{
-    if ($n < 50) {
-        if ($n !== 0) {
-            if ($n !== 1) {
-                return fibonacci($n - 1) + fibonacci($n - 2);
-            } else {
-                return 1;
-            }
-        } else {
-            return 0;
-        }
-    } else {
-        return 'Not supported';
-    }
-}
+def fibonacci(n):
+	if n < 50:
+		if n != 0:
+			if n != 1:
+				return fibonacci(n-1) + fibonacci(n-2)
+			else:
+				return 1
+		else:
+			return 0
+
+	else:
+		raise OverflowError
 ```
 
 **Good:**
 
 ```python
-function fibonacci(int $n): int
-{
-    if ($n === 0 || $n === 1) {
-        return $n;
-    }
+def fibonacci(n):
+	if n == 0 or n == 1:
+		return n
+	
+	if n > 50:
+		raise OverflowError
 
-    if ($n > 50) {
-        throw new \Exception('Not supported');
-    }
-
-    return fibonacci($n - 1) + fibonacci($n - 2);
-}
+	return fibonacci(n-1) + fibonacci(n-2)
 ```
 
 **[⬆ back to top](#table-of-contents)**
@@ -301,33 +293,34 @@ Explicit is better than implicit.
 **Bad:**
 
 ```python
-$l = ['Austin', 'New York', 'San Francisco'];
+l =  ['Austin', 'New York', 'San Francisco']
 
-for ($i = 0; $i < count($l); $i++) {
-    $li = $l[$i];
-    doStuff();
-    doSomeOtherStuff();
-    // ...
-    // ...
-    // ...
-    // Wait, what is `$li` for again?
-    dispatch($li);
-}
+i = 0
+while i < len(l):
+	li = l[i]
+	doStuff()
+	doSomeOtherStuff()
+	# ...
+	# ...
+	# ...
+	# ...
+	dispatch(li)
+	i += 1
 ```
 
 **Good:**
 
 ```python
-$locations = ['Austin', 'New York', 'San Francisco'];
+locations = ['Austin', 'New York', 'San Francisco'];
 
-foreach ($locations as $location) {
-    doStuff();
-    doSomeOtherStuff();
-    // ...
-    // ...
-    // ...
-    dispatch($location);
-}
+for location in locations:
+	doStuff()
+	doSomeOtherStuff()
+	# ...
+	# ...
+	# ...
+	# ...
+	dispatch(location)
 ```
 
 **[⬆ back to top](#table-of-contents)**
@@ -340,27 +333,23 @@ variable name.
 **Bad:**
 
 ```python
-class Car
-{
-    public $carMake;
-    public $carModel;
-    public $carColor;
+class Car:
 
-    //...
+	carMake = ''
+	carModle = ''
+	carColor = ''
+    #...
 }
 ```
 
 **Good:**
 
 ```python
-class Car
-{
-    public $make;
-    public $model;
-    public $color;
-
-    //...
-}
+class Car:
+	make = ''
+	modle = ''
+	color = ''
+    #...
 ```
 
 **[⬆ back to top](#table-of-contents)**
@@ -369,13 +358,11 @@ class Car
 
 **Not good:**
 
-This is not good because `$breweryName` can be `NULL`.
+This is not good because `breweryName` can be `NULL`.
 
 ```python
-function createMicrobrewery($breweryName = 'Hipster Brew Co.'): void
-{
-    // ...
-}
+def createMicrobrewery(breweryName):
+
 ```
 
 **Not bad:**
@@ -383,22 +370,19 @@ function createMicrobrewery($breweryName = 'Hipster Brew Co.'): void
 This opinion is more understandable than the previous version, but it better controls the value of the variable.
 
 ```python
-function createMicrobrewery($name = null): void
-{
-    $breweryName = $name ?: 'Hipster Brew Co.';
-    // ...
+def createMicrobrewery(breweryName = ''):
+	breweryName = breweryName or 'Hipster Brew Co.'
+    # ...
 }
 ```
 
 **Good:**
 
- You can use [type hinting](http://python.net/manual/en/functions.arguments.python#functions.arguments.type-declaration) and be sure that the `$breweryName` will not be `NULL`.
+ You can use function annotations and be sure that the `breweryName` will not be `NULL`.
 
 ```python
-function createMicrobrewery(string $breweryName = 'Hipster Brew Co.'): void
-{
-    // ...
-}
+def createMicrobrewery(breweryName: str = 'Hipster Brew Co.'):
+    # ...
 ```
 
 **[⬆ back to top](#table-of-contents)**
