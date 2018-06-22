@@ -389,38 +389,29 @@ def createMicrobrewery(breweryName: str = 'Hipster Brew Co.'):
 
 ## Comparison
 
-### Use [identical comparison](http://python.net/manual/en/language.operators.comparison.python)
+type checking is an antipattern
 
 **Not good:**
 
-The simple comparison will convert the string in an integer.
-
 ```python
-$a = '42';
-$b = 42;
+a = '42'
+b = 42
 
-if ($a != $b) {
-   // The expression will always pass
-}
+if type(a) == type(b):
+    #...
 ```
-
-The comparison `$a != $b` returns `FALSE` but in fact it's `TRUE`!
-The string `42` is different than the integer `42`.
 
 **Good:**
 
 The identical comparison will compare type and value.
 
 ```python
-$a = '42';
-$b = 42;
+a = '42'
+b = 42
 
-if ($a !== $b) {
-    // The expression is verified
-}
+if a == b:
+    # The expression is verified
 ```
-
-The comparison `$a !== $b` returns `TRUE`.
 
 **[⬆ back to top](#table-of-contents)**
 
@@ -436,38 +427,33 @@ where you have to test tons of different cases with each separate argument.
 Zero arguments is the ideal case. One or two arguments is ok, and three should be avoided. 
 Anything more than that should be consolidated. Usually, if you have more than two 
 arguments then your function is trying to do too much. In cases where it's not, most 
-of the time a higher-level object will suffice as an argument.
+of the time a single higher-level object will suffice as an argument.
 
 **Bad:**
 
 ```python
-function createMenu(string $title, string $body, string $buttonText, bool $cancellable): void
-{
-    // ...
-}
+def createMenu(title: str, body: str, buttonText: str, cancellable: bool):
+	# ...
 ```
 
 **Good:**
 
 ```python
-class MenuConfig
-{
-    public $title;
-    public $body;
-    public $buttonText;
-    public $cancellable = false;
-}
+class MenuConfig:
+	title = ''
+	body = ''
+	buttonText = ''
+	cancellable = False
 
-$config = new MenuConfig();
-$config->title = 'Foo';
-$config->body = 'Bar';
-$config->buttonText = 'Baz';
-$config->cancellable = true;
 
-function createMenu(MenuConfig $config): void
-{
-    // ...
-}
+config = MenuConfig()
+config.title = 'Foo'
+config.body = 'Bar'
+config.buttonText = 'Baz'
+config.cancellable = True
+
+def createMenu(config: MenuConfig):
+	# ...
 ```
 
 **[⬆ back to top](#table-of-contents)**
@@ -482,37 +468,27 @@ of many developers.
 
 **Bad:**
 ```python
-function emailClients(array $clients): void
-{
-    foreach ($clients as $client) {
-        $clientRecord = $db->find($client);
-        if ($clientRecord->isActive()) {
-            email($client);
-        }
-    }
-}
+def emailClients(databaseclient: DBClient, clients: tuple):
+	for client in clients:
+		clientrecord = databaseclient.find(client)
+		if clientrecord.isActive():
+			email(client)
 ```
 
 **Good:**
 
 ```python
-function emailClients(array $clients): void
-{
-    $activeClients = activeClients($clients);
-    array_walk($activeClients, 'email');
-}
+def emailClients(databaseclient: DBClient, clients: tuple):
 
-function activeClients(array $clients): array
-{
-    return array_filter($clients, 'isClientActive');
-}
+	activeClientList = [ client for client in clients if isClientActive(databaseclient, client)]
 
-function isClientActive(int $client): bool
-{
-    $clientRecord = $db->find($client);
+	for activeclient in activeClientList:
+		email(activeclient)
 
-    return $clientRecord->isActive();
-}
+def isClientActive((databaseclient: DBClient, client_id: int):
+	clientrecord = databaseclient->find(client_id)
+
+	return clientrecord->isActive()
 ```
 
 **[⬆ back to top](#table-of-contents)**
@@ -522,37 +498,29 @@ function isClientActive(int $client): bool
 **Bad:**
 
 ```python
-class Email
-{
-    //...
+class Email:
 
-    public function handle(): void
-    {
-        mail($this->to, $this->subject, $this->body);
-    }
-}
+	def handle(self):
+		mail(self.to, self.subject, self.body)
 
-$message = new Email(...);
-// What is this? A handle for the message? Are we writing to a file now?
-$message->handle();
+message = Email()
+
+# What is this? A handle for the message? Are we writing to a file now?
+message.handle()
 ```
 
 **Good:**
 
 ```python
-class Email 
-{
-    //...
+class Email:
 
-    public function send(): void
-    {
-        mail($this->to, $this->subject, $this->body);
-    }
-}
+	def send(self):
+		mail(self.to, self.subject, self.body)
 
-$message = new Email(...);
-// Clear and obvious
-$message->send();
+message = Email()
+
+# Clear and obvious
+message->send()
 ```
 
 **[⬆ back to top](#table-of-contents)**
@@ -566,29 +534,24 @@ testing.
 **Bad:**
 
 ```python
-function parseBetterJSAlternative(string $code): void
-{
-    $regexes = [
-        // ...
-    ];
+def parseBetterJSAlternative(code: str):
+	regexes = [
+		# ...
+	]
 
-    $statements = explode(' ', $code);
-    $tokens = [];
-    foreach ($regexes as $regex) {
-        foreach ($statements as $statement) {
-            // ...
-        }
-    }
+	statements = code.split()
+	tokens = []
+	for regex in regexes:
+		for statement in statements:
+			# ...
 
-    $ast = [];
-    foreach ($tokens as $token) {
-        // lex...
-    }
+	ast = []
 
-    foreach ($ast as $node) {
-        // parse...
-    }
-}
+	for token in tokens:
+		# lex ...
+
+	for node in ast:
+		# parse ...
 ```
 
 **Bad too:**
@@ -596,41 +559,39 @@ function parseBetterJSAlternative(string $code): void
 We have carried out some of the functionality, but the `parseBetterJSAlternative()` function is still very complex and not testable.
 
 ```python
-function tokenize(string $code): array
-{
-    $regexes = [
-        // ...
-    ];
+def tokenize(code: str):
+	regexes = [
+		# ...
+	]
 
-    $statements = explode(' ', $code);
-    $tokens = [];
-    foreach ($regexes as $regex) {
-        foreach ($statements as $statement) {
-            $tokens[] = /* ... */;
-        }
-    }
+	statements = code.split()
 
-    return $tokens;
+	tokens = []
+
+	for regex in regexes:
+		for statement in statements:
+			match = regex.match(statement)
+
+			if match:
+				token.append(match.group(1))
+
+    return tokens
+
+def lexer(tokens: list):
+	ast = []
+
+	for token in tokens:
+		# ast.append ...
+	
+	return ast
 }
 
-function lexer(array $tokens): array
-{
-    $ast = [];
-    foreach ($tokens as $token) {
-        $ast[] = /* ... */;
-    }
+def parseBetterJSAlternative(code: str):
 
-    return $ast;
-}
-
-function parseBetterJSAlternative(string $code): void
-{
-    $tokens = tokenize($code);
-    $ast = lexer($tokens);
-    foreach ($ast as $node) {
-        // parse...
-    }
-}
+	tokens = tokenize(code)
+	ast = lexer(tokens)
+	for node in ast:
+		# parse ..
 ```
 
 **Good:**
@@ -638,59 +599,53 @@ function parseBetterJSAlternative(string $code): void
 The best solution is move out the dependencies of `parseBetterJSAlternative()` function.
 
 ```python
-class Tokenizer
-{
-    public function tokenize(string $code): array
-    {
-        $regexes = [
-            // ...
-        ];
+class Tokenizer:
+	
+	def tokenize(code: str):
 
-        $statements = explode(' ', $code);
-        $tokens = [];
-        foreach ($regexes as $regex) {
-            foreach ($statements as $statement) {
-                $tokens[] = /* ... */;
-            }
-        }
+	regexes = [
+		# ...
+	]
 
-        return $tokens;
-    }
-}
+	statements = code.split()
 
-class Lexer
-{
-    public function lexify(array $tokens): array
-    {
-        $ast = [];
-        foreach ($tokens as $token) {
-            $ast[] = /* ... */;
-        }
+	tokens = []
 
-        return $ast;
-    }
-}
+	for regex in regexes:
+		for statement in statements:
+			match = regex.match(statement)
 
-class BetterJSAlternative
-{
-    private $tokenizer;
-    private $lexer;
+			if match:
+				token.append(match.group(1))
 
-    public function __construct(Tokenizer $tokenizer, Lexer $lexer)
-    {
-        $this->tokenizer = $tokenizer;
-        $this->lexer = $lexer;
-    }
+    return tokens
 
-    public function parse(string $code): void
-    {
-        $tokens = $this->tokenizer->tokenize($code);
-        $ast = $this->lexer->lexify($tokens);
-        foreach ($ast as $node) {
-            // parse...
-        }
-    }
-}
+class Lexer:
+
+	def lexify(tokens: list):
+		ast = []
+
+		for token in tokens:
+			# ast.append ...
+	
+		return ast
+
+class BetterJSAlternative:
+
+	tokenizer
+	lexer
+
+	def __init__(self, tokenizer, lexer):
+		self.tokenizer = tokenizer
+		self.lexer = lexer
+
+	def parse(self, code: str):
+
+		tokens = self.tokenizer.tokenize(code)
+		ast = self.lexer.lexify(tokens)
+
+		for node in ast:
+			# parse ...
 ```
 
 **[⬆ back to top](#table-of-contents)**
@@ -704,28 +659,21 @@ based on a boolean.
 **Bad:**
 
 ```python
-function createFile(string $name, bool $temp = false): void
-{
-    if ($temp) {
-        touch('./temp/'.$name);
-    } else {
-        touch($name);
-    }
-}
+def createFile(name: str, temp: bool = False):
+	if temp:
+		touch('./temp/' + name)
+	else:
+		touch(name)
 ```
 
 **Good:**
 
 ```python
-function createFile(string $name): void
-{
-    touch($name);
-}
+def createFile(name: str):
+    touch(name)
 
-function createTempFile(string $name): void
-{
-    touch('./temp/'.$name);
-}
+def createTempFile(name: str):
+    touch('./temp/' + name)
 ```
 
 **[⬆ back to top](#table-of-contents)**
