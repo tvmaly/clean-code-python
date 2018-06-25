@@ -116,13 +116,13 @@ Make your names searchable.
 
 ```python
 # What the heck is 448 for?
-result = serializer.serialize(data, 448);
+result = serializer.serialize(data, 448)
 ```
 
 **Good:**
 
 ```python
-json = serializer.serialize(data, sort_keys=True, indent=4);
+json = serializer.serialize(data, sort_keys=True, indent=4)
 ```
 
 ### Use searchable names (part 2)
@@ -171,7 +171,7 @@ class User:
 ```python
 import re
 
-address = 'One Infinite Loop, Cupertino 95014';
+address = 'One Infinite Loop, Cupertino 95014'
 
 city_zip_code_regex = re.compile("^[^,]+,\s*(.+?)\s*(\d{5})$")
 
@@ -187,7 +187,7 @@ It's better, but we are still heavily dependent on regex.
 ```python
 import re
 
-address = 'One Infinite Loop, Cupertino 95014';
+address = 'One Infinite Loop, Cupertino 95014'
 
 city_zip_code_regex = re.compile("^[^,]+,\s*(.+?)\s*(\d{5})$")
 
@@ -203,7 +203,7 @@ save_city_zip_code(city, zipcode)
 Decrease dependence on regex by naming subpatterns.
 
 ```python
-$address = 'One Infinite Loop, Cupertino 95014';
+address = 'One Infinite Loop, Cupertino 95014'
 
 city_zip_code_regex = re.compile("^[^,]+,\s*(?P<city>.+?)\s*(?P<zipcode>\d{5})$")
 
@@ -311,7 +311,7 @@ while i < len(l):
 **Good:**
 
 ```python
-locations = ['Austin', 'New York', 'San Francisco'];
+locations = ['Austin', 'New York', 'San Francisco']
 
 for location in locations:
 	doStuff()
@@ -699,33 +699,30 @@ than the vast majority of other programmers.
 ```python
 // Global variable referenced by following function.
 // If we had another function that used this name, now it'd be an array and it could break it.
-$name = 'Ryan McDermott';
+name = 'Ryan McDermott'
 
-function splitIntoFirstAndLastName(): void
+def splitIntoFirstAndLastName():
 {
-    global $name;
-
-    $name = explode(' ', $name);
+	global name
+    name = explode(' ', name)
 }
 
-splitIntoFirstAndLastName();
+splitIntoFirstAndLastName()
 
-var_dump($name); // ['Ryan', 'McDermott'];
+print(name)
 ```
 
 **Good:**
 
 ```python
-function splitIntoFirstAndLastName(string $name): array
-{
-    return explode(' ', $name);
-}
+def splitIntoFirstAndLastName(name: str):
+	return name.split()
 
-$name = 'Ryan McDermott';
-$newName = splitIntoFirstAndLastName($name);
+name = 'Ryan McDermott'
+newName = splitIntoFirstAndLastName(name)
 
-var_dump($name); // 'Ryan McDermott';
-var_dump($newName); // ['Ryan', 'McDermott'];
+print(name)
+print(newName)
 ```
 
 **[⬆ back to top](#table-of-contents)**
@@ -741,47 +738,37 @@ that tried to do the same thing.
 **Bad:**
 
 ```python
-function config(): array
-{
-    return  [
-        'foo' => 'bar',
-    ]
-}
+def config():
+	return {'foo':'bar'}
 ```
 
 **Good:**
 
 ```python
-class Configuration
-{
-    private $configuration = [];
+class Configuration:
 
-    public function __construct(array $configuration)
-    {
-        $this->configuration = $configuration;
-    }
+	_configuration = {}
 
-    public function get(string $key): ?string
-    {
-        return isset($this->configuration[$key]) ? $this->configuration[$key] : null;
-    }
-}
+
+	def __init__(self, configuration: dict):
+		self._configuration = configuration
+
+	def get(key: str)
+		return self._configuration[key] if key in self._configuration else ''
 ```
 
 Load configuration and create instance of `Configuration` class 
 
 ```python
-$configuration = new Configuration([
-    'foo' => 'bar',
-]);
+configuration = Configuration({'foo':'bar'})
 ```
 
 And now you must use instance of `Configuration` in your application.
 
 **[⬆ back to top](#table-of-contents)**
 
+#TODO
 ### Don't use a Singleton pattern
-
 Singleton is an [anti-pattern](https://en.wikipedia.org/wiki/Singleton_pattern). Paraphrased from Brian Button:
  1. They are generally used as a **global instance**, why is that so bad? Because **you hide the dependencies** of your application in your code, instead of exposing them through the interfaces. Making something global to avoid passing it around is a [code smell](https://en.wikipedia.org/wiki/Code_smell).
  2. They violate the [single responsibility principle](#single-responsibility-principle-srp): by virtue of the fact that **they control their own creation and lifecycle**.
